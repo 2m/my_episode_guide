@@ -1,6 +1,6 @@
 {
   "name": "My Episode Guide",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Shows the next episode which is to be aired for your chosen TV shows. All information is taken from www.episodeworld.com.",
   "background_page": "background.html",
   "browser_action": {
@@ -10,5 +10,7 @@
   "icons": { "16": "images/icon16.png", "48": "images/icon48.png", "128": "images/icon128.png" },
   "permissions": [
     "http://www.episodeworld.com/"
-  ]
+  ],
+  "homepage_url": "https://chrome.google.com/extensions/detail/jeehkhpiepgmjpbcckdglnfmogadopkj?hl=en",
+  "options_page": "options.html"
 }

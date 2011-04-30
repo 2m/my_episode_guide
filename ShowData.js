@@ -1,7 +1,7 @@
 function ShowData(title, dayOffset, onDelete, onGetDaysRemaining) {
 
     this.title = title;
-    this.id = title.toLowerCase().replace(/[^a-z]/g, '_');
+    this.id = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
     this.status = null;
     this.dayOffset = dayOffset;
     this.episodes = new Array();
@@ -39,8 +39,9 @@ ShowData.prototype.getData = function(callback) {
 
 ShowData.prototype.parseInfoResp = function(resp) {
     var titleRegExp = new RegExp('<h1>(.*)</h1>', "g");
+    var idRegExp = new RegExp('show/([A-Za-z0-9_]*)/season=all/english">All Seasons', "g");
     var statusRegExp = new RegExp('<th width="170".*?>(.*)<', "g");
-    var episodesRegExp = new RegExp('">([0-9]{1,2}x[0-9]{2}).*?">(?:.*faint">)?(.*?)(?:</font>)?</a>.*?([0-9]{4}-[0-9]{2}-[0-9]{2}|\(unknown\))', "g");
+    var episodesRegExp = new RegExp('">([0-9]{1,2}x[0-9]{2}|Special).*?">(?:.*faint">)?(.*?)(?:</font>)?</a>.*?([0-9]{4}-[0-9]{2}-[0-9]{2}|\(unknown\))', "g");
 
     var status = statusRegExp.exec(resp);
     if (status == null) {
@@ -51,6 +52,9 @@ ShowData.prototype.parseInfoResp = function(resp) {
 
     var title = titleRegExp.exec(resp);
     this.title = title[1];
+
+    var id = idRegExp.exec(resp);
+    this.id = id[1];
 
     var episode;
     while ((episode = episodesRegExp.exec(resp))) {
@@ -129,9 +133,9 @@ ShowData.prototype.adjustDayOffset = function (delta) {
         this.dayOffset += delta;
     }
 
-    var showEntry = JSON.parse(localStorage.getItem(this.title));
+    var showEntry = JSON.parse(localStorage.getItem(this.id));
     showEntry.dayOffset = this.dayOffset;
-    localStorage.setItem(this.title, JSON.stringify(showEntry));
+    localStorage.setItem(this.id, JSON.stringify(showEntry));
 
     this.adjustEpisodeAirDates();
     this.getEpisodeToShow();
@@ -139,15 +143,15 @@ ShowData.prototype.adjustDayOffset = function (delta) {
 }
 
 ShowData.prototype.remove = function () {
-    localStorage.removeItem(this.title);
+    localStorage.removeItem(this.id);
     this.onDelete(this);
 }
 
 function Episode(number, title, airDate) {
 
-    this.number = number;
+    this.number = (number == "Special" ? "Spec." : number);;
     this.title = title;
-    this.id = title.toLowerCase().replace(/[^a-z]/g, '_');
+    this.id = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
 
     this.airDate = null;
     if (airDate != "unknown") {

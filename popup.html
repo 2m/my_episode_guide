@@ -4,20 +4,21 @@
 <link href="style.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+<script type="text/javascript" src="handles.js"></script>
 <script type="text/javascript" src="Show.js"></script>
 <script>
 function onLoad() {
-    var orderedShowTitles = Array();
+    var orderedShowIds = Array();
     for (var i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
         var showDataEntry = JSON.parse(localStorage.getItem(key));
 
-        orderedShowTitles[showDataEntry["order"]] = showDataEntry["title"];
+        orderedShowIds[showDataEntry["order"]] = key;
     }
 
-    for (var i = 0; i < orderedShowTitles.length; i++) {
-        addShowToPage(getBackgroundHandle().getShowData(orderedShowTitles[i]));
-        //console.log("on load "+orderedShowTitles[i]);
+    for (var i = 0; i < orderedShowIds.length; i++) {
+        addShowToPage(getBackgroundHandle().getShowData(orderedShowIds[i]));
+        //console.log("on load "+orderedShowIds[i]);
     }
 
     makeShowsSortable();
@@ -44,26 +45,14 @@ function enableInput() {
     $("#addShow #showTitle").removeClass("spinner");
 }
 
-function getBackgroundHandle() {
-    var backgroundUrl = chrome.extension.getURL('background.html');
-    //Look through all the pages in this extension to find one we can use.
-    var views = chrome.extension.getViews();
-    for (var i = 0; i < views.length; i++) {
-        var view = views[i];
-        if (view.location.href == backgroundUrl) {
-            return view;
-        }
-    }
-}
-
 function saveNewOrder() {
     $("#shows").find(".show").each(function(i)
     {
-        var showTitle = $(this).children(".fullTitle").children(".showTitle").html();
+        var showId = $(this).attr("id");
 
-        var showDataEntry = JSON.parse(localStorage.getItem(showTitle));
+        var showDataEntry = JSON.parse(localStorage.getItem(showId));
         showDataEntry["order"] = i;
-        localStorage.setItem(showDataEntry.title, JSON.stringify(showDataEntry));
+        localStorage.setItem(showId, JSON.stringify(showDataEntry));
     });
 }
 

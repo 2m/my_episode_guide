@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="handles.js"></script>
+<script>
+function clearCache() {
+    localStorage.clear();
+    getBackgroundHandle().draw();
+}
+</script>
+<style>
+a {
+    color: blue;
+    text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<h1>My Episode Guide</h1>
+<p>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">Clearing the Show Cache</a>. All your show setting will be lost.</p>
+
+</body>
+</html>

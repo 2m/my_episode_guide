@@ -1,6 +1,9 @@
-#contents {
+body {
     font-family: Verdana;
     font-size: 13px;
+}
+
+#contents {
     position: relative;
     width: 310px;
 }

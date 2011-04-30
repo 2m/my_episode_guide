@@ -1,3 +1,4 @@
+<script type="text/javascript" src="handles.js"></script>
 <script type="text/javascript" src="ShowData.js"></script>
 <script>
 var showDataHandles = {};
@@ -6,7 +7,7 @@ function onLoad() {
     for (i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
         var showDataEntry = JSON.parse(localStorage.getItem(key));
-        showDataHandles[showDataEntry.title] = new ShowData(showDataEntry.title, showDataEntry.dayOffset, onShowDelete, onGetDaysRemaining).getData();
+        showDataHandles[key] = new ShowData(key, showDataEntry.dayOffset, onShowDelete, onGetDaysRemaining).getData();
     }
 }
 
@@ -20,8 +21,8 @@ function getNewShowData(title) {
 
 function onNewShowDataParsed(showData) {
     var showDataEntry = {title: showData.title, dayOffset: showData.dayOffset, order: 0};
-    localStorage.setItem(showDataEntry.title, JSON.stringify(showDataEntry));
-    showDataHandles[showData.title] = showData;
+    localStorage.setItem(showData.id, JSON.stringify(showDataEntry));
+    showDataHandles[showData.id] = showData;
 
     getPopupHandle().addShowToPage(showData);
     getPopupHandle().saveNewOrder();
@@ -40,11 +41,15 @@ function onGetDaysRemaining(showData) {
 }
 
 function getDaysToNextEpisode() {
-    var nextEpisodeAirsIn;
+
+    var nextEpisodeAirsIn = null;
     for (i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
-        if (nextEpisodeAirsIn == null || showDataHandles[key].episodeToShowAirsInDays < nextEpisodeAirsIn) {
-            nextEpisodeAirsIn = showDataHandles[key].episodeToShowAirsInDays;
+
+        if (showDataHandles[key].episodeToShowAirsInDays != null) {
+            if (nextEpisodeAirsIn == null || showDataHandles[key].episodeToShowAirsInDays < nextEpisodeAirsIn) {
+                nextEpisodeAirsIn = showDataHandles[key].episodeToShowAirsInDays;
+            }
         }
     }
 
@@ -67,18 +72,6 @@ function draw(nextEpisodeAirsIn) {
     chrome.browserAction.setIcon({imageData:ctx.getImageData(0, 0, 18, 18)});
     ctx.restore();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function getPopupHandle() {
-    var viewUrl = chrome.extension.getURL('popup.html');
-    //Look through all the pages in this extension to find one we can use.
-    var views = chrome.extension.getViews();
-    for (var i = 0; i < views.length; i++) {
-        var view = views[i];
-        if (view.location.href == viewUrl) {
-            return view;
-        }
-    }
 }
 </script>
 <body onload="onLoad()">

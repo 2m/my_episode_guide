@@ -1,0 +1,129 @@
+#contents {
+    font-family: Verdana;
+    font-size: 13px;
+    position: relative;
+    width: 310px;
+}
+
+#addShow #showTitle {
+    padding-right: 30px;
+}
+
+#shows, #episodes {
+    position: absolute;
+}
+
+#episodes {
+    left: 400px;
+}
+
+#episodes:hover {
+    cursor: pointer;
+}
+
+#episodes > div {
+    display: none;
+}
+
+.show {
+    position: relative;
+    padding: 5px;
+    width: 300px;
+}
+
+.show:hover {
+    background-color: #E8E8E8;
+}
+
+.show .fullTitle {
+    float: left;
+    margin-right: 20px;
+}
+
+.fullTitle .showTitle {
+    font-weight: bold;
+    display: inline;
+}
+
+.fullTitle .episodeTitle {
+    display: inline;
+    margin: 0px 5px;
+}
+
+.fullTitle .episodeNumber {
+    display: inline;
+}
+
+.show .episodeDate {
+    color: #B11;
+    clear: both;
+}
+
+.show .removeShow {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    cursor: pointer;
+}
+
+.show .toEpisodeList {
+    position: absolute;
+    right: 5px;
+    top: 21px;
+    cursor: pointer;
+}
+
+#episodes .incOffset, #episodes .decOffset, #episodes .resetOffset {
+    float: right;
+    display: inline;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#episodes .episode {
+    width: 300px;
+}
+
+.episode .number {
+    width: 37px;
+}
+
+.episode .title {
+    width: 197px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#episodes span {
+    display: inline-block;
+    font-size: 10px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.gray {
+    color: gray;
+}
+
+p {
+    margin: 0px;
+}
+
+.ui-sortable div {
+    cursor: move;
+}
+
+.spinner {
+    background: url(images/spinner.gif) no-repeat right center;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

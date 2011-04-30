@@ -1,0 +1,86 @@
+<script type="text/javascript" src="ShowData.js"></script>
+<script>
+var showDataHandles = {};
+
+function onLoad() {
+    for (i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        var showDataEntry = JSON.parse(localStorage.getItem(key));
+        showDataHandles[showDataEntry.title] = new ShowData(showDataEntry.title, showDataEntry.dayOffset, onShowDelete, onGetDaysRemaining).getData();
+    }
+}
+
+function getShowData(title) {
+    return showDataHandles[title];
+}
+
+function getNewShowData(title) {
+    return new ShowData(title, 0, onShowDelete, onGetDaysRemaining).getData(onNewShowDataParsed);
+}
+
+function onNewShowDataParsed(showData) {
+    var showDataEntry = {title: showData.title, dayOffset: showData.dayOffset, order: 0};
+    localStorage.setItem(showDataEntry.title, JSON.stringify(showDataEntry));
+    showDataHandles[showData.title] = showData;
+
+    getPopupHandle().addShowToPage(showData);
+    getPopupHandle().saveNewOrder();
+    getPopupHandle().enableInput();
+    getDaysToNextEpisode();
+}
+
+function onShowDelete(showData) {
+    showDataHandles[showData.title] = null;
+    getDaysToNextEpisode();
+    getPopupHandle().saveNewOrder();
+}
+
+function onGetDaysRemaining(showData) {
+    getDaysToNextEpisode();
+}
+
+function getDaysToNextEpisode() {
+    var nextEpisodeAirsIn;
+    for (i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (nextEpisodeAirsIn == null || showDataHandles[key].episodeToShowAirsInDays < nextEpisodeAirsIn) {
+            nextEpisodeAirsIn = showDataHandles[key].episodeToShowAirsInDays;
+        }
+    }
+
+    draw(nextEpisodeAirsIn);
+}
+
+function draw(nextEpisodeAirsIn) {
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+
+    ctx.save();
+    ctx.translate(9, 9);
+
+    ctx.font = "bold 10pt Verdana";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillText(nextEpisodeAirsIn == null ? "??" : nextEpisodeAirsIn, 0, 0);
+
+    chrome.browserAction.setIcon({imageData:ctx.getImageData(0, 0, 18, 18)});
+    ctx.restore();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function getPopupHandle() {
+    var viewUrl = chrome.extension.getURL('popup.html');
+    //Look through all the pages in this extension to find one we can use.
+    var views = chrome.extension.getViews();
+    for (var i = 0; i < views.length; i++) {
+        var view = views[i];
+        if (view.location.href == viewUrl) {
+            return view;
+        }
+    }
+}
+</script>
+<body onload="onLoad()">
+    <canvas id="canvas" width="18" height="18" style="border: black 2px solid; display:none"></canvas>
+</body>

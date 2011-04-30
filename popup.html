@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href="style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+<script type="text/javascript" src="Show.js"></script>
+<script>
+function onLoad() {
+    var orderedShowTitles = Array();
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        var showDataEntry = JSON.parse(localStorage.getItem(key));
+
+        orderedShowTitles[showDataEntry["order"]] = showDataEntry["title"];
+    }
+
+    for (var i = 0; i < orderedShowTitles.length; i++) {
+        addShowToPage(getBackgroundHandle().getShowData(orderedShowTitles[i]));
+        //console.log("on load "+orderedShowTitles[i]);
+    }
+
+    makeShowsSortable();
+}
+
+function addShow() {
+    var showTitle = $("#addShow #showTitle").val().replace(/[^A-Za-z0-9 -]/g, '');
+    var showData = getBackgroundHandle().getNewShowData(showTitle);
+
+    $("#addShow #showTitle").attr("disabled", "disabled");
+    $("#addShow #showTitle").addClass("spinner");
+}
+
+function addShowToPage(showData) {
+    var show = new Show(showData);
+    show.init();
+    show.appendShowTo("shows");
+    show.appendEpisodesTo("episodes");
+}
+
+function enableInput() {
+    $("#addShow #showTitle").removeAttr("disabled");
+    $("#addShow #showTitle").val("");
+    $("#addShow #showTitle").removeClass("spinner");
+}
+
+function getBackgroundHandle() {
+    var backgroundUrl = chrome.extension.getURL('background.html');
+    //Look through all the pages in this extension to find one we can use.
+    var views = chrome.extension.getViews();
+    for (var i = 0; i < views.length; i++) {
+        var view = views[i];
+        if (view.location.href == backgroundUrl) {
+            return view;
+        }
+    }
+}
+
+function saveNewOrder() {
+    $("#shows").find(".show").each(function(i)
+    {
+        var showTitle = $(this).children(".fullTitle").children(".showTitle").html();
+
+        var showDataEntry = JSON.parse(localStorage.getItem(showTitle));
+        showDataEntry["order"] = i;
+        localStorage.setItem(showDataEntry.title, JSON.stringify(showDataEntry));
+    });
+}
+
+function makeShowsSortable() {
+    $("#shows").sortable({
+        update: function(event, ui)
+        {
+            saveNewOrder();
+        }
+    });
+}
+</script>
+</head>
+<body onload="onLoad()">
+    <div id="contents">
+        <div id="addShow">
+            <form onSubmit="addShow(); return false;">
+                <input id="showTitle" type="text" value="Enter show title" size="30" onfocus="this.value=''" />
+                <input type="submit" value="Add" />
+            </form>
+        </div>
+        <div id="shows"></div>
+        <div id="episodes"></div>
+    </div>
+</body>
+</html>

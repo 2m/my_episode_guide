@@ -52,6 +52,10 @@ body {
     background-color: #E8E8E8;
 }
 
+.loading {
+    background-color: #E8E8E8;
+}
+
 .show .fullTitle {
     float: left;
     margin-right: 20px;

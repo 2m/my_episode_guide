@@ -11,6 +11,8 @@
 <script type="text/javascript" src="Show.js"></script>
 
 <script>
+var showHandles = [];
+
 function onLoad() {
 	$("#showTitle").autocomplete("/url/to/backend", {
 		showResult: function(value, data) {
@@ -51,6 +53,8 @@ function addShowToPage(showData) {
     show.init();
     show.appendShowTo("shows");
     show.appendEpisodesTo("episodes");
+    
+    showHandles.push(show);
 }
 
 function enableInput() {
@@ -118,6 +122,22 @@ function sortShows() {
     saveNewOrder();
 }
 
+function refresh() {
+    for (var i = 0; i < showHandles.length; i++) {
+        (function(showHandle) {
+            // clear the style first,
+            // because sometimes animations get stuck in the middle
+            showHandle.rootEl.attr("style", "");
+            
+            showHandle.rootEl.addClass("loading", 100);
+            showHandle.showData.getData(function() {                
+                showHandle.fillInfo();
+                showHandle.rootEl.removeClass("loading", 500, 'easeOutBounce')
+                getBackgroundHandle().getDaysToNextEpisode();
+            });
+        })(showHandles[i]);
+    }
+}
 
 </script>
 </head>
@@ -129,7 +149,7 @@ function sortShows() {
                 <input type="submit" value="Add" />
 				<div id="links">
 					<span><a href="#" onClick="sortShows()">Order</a></span>
-					<span><a href="#">Refresh</a></span>
+					<span><a href="#" onClick="refresh()">Refresh</a></span>
 				</div>
             </form>
         </div>

@@ -65,6 +65,7 @@ ShowData.prototype.parseInfoResp = function(resp) {
     this.id = id[1];
 
     var episode;
+    this.episodes = [];
     while ((episode = episodesRegExp.exec(resp))) {
         this.episodes.push(new Episode(episode[1], episode[2], episode[3]))
     }

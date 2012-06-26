@@ -73,6 +73,25 @@ function draw(nextEpisodeAirsIn) {
     ctx.restore();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
+
+function refreshInBackground() {
+    if (getPopupHandle() != null) {
+        // do not do refresh if popup is open,
+        // background page does not know how to update dom
+        console.log("returning");
+        return;
+    }
+
+    for (var key in showDataHandles) {
+        showDataHandles[key].getData(function() {
+            getDaysToNextEpisode();
+        });
+    }
+}
+
+setInterval(function() {
+    refreshInBackground();
+}, 2 * 60 * 60 * 1000);
 </script>
 <body onload="onLoad()">
     <canvas id="canvas" width="18" height="18" style="border: black 2px solid; display:none"></canvas>

@@ -1,12 +1,13 @@
+<script type="text/javascript" src="storage.js"></script>
 <script type="text/javascript" src="handles.js"></script>
 <script type="text/javascript" src="ShowData.js"></script>
 <script>
 var showDataHandles = {};
 
 function onLoad() {
-    for (i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        var showDataEntry = JSON.parse(localStorage.getItem(key));
+    for (i = 0; i < showStorage.length(); i++) {
+        var key = showStorage.key(i);
+        var showDataEntry = showStorage.getItem(key);
         showDataHandles[key] = new ShowData(key, showDataEntry.dayOffset, onShowDelete, onGetDaysRemaining).getData();
     }
 }
@@ -21,7 +22,7 @@ function getNewShowData(title) {
 
 function onNewShowDataParsed(showData) {
     var showDataEntry = {title: showData.title, dayOffset: showData.dayOffset, order: 0};
-    localStorage.setItem(showData.id, JSON.stringify(showDataEntry));
+    showStorage.setItem(showData.id, showDataEntry);
     showDataHandles[showData.id] = showData;
 
     getPopupHandle().addShowToPage(showData);
@@ -43,8 +44,8 @@ function onGetDaysRemaining(showData) {
 function getDaysToNextEpisode() {
 
     var nextEpisodeAirsIn = null;
-    for (i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
+    for (i = 0; i < showStorage.length(); i++) {
+        var key = showStorage.key(i);
 
         if (showDataHandles[key].episodeToShowAirsInDays != null) {
             if (nextEpisodeAirsIn == null || showDataHandles[key].episodeToShowAirsInDays < nextEpisodeAirsIn) {

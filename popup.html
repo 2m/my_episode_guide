@@ -7,6 +7,7 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
 <script type="text/javascript" src="jquery.autocomplete.js"></script>
 <script type="text/javascript" src="jquery.autocomplete.overrides.js"></script>
+<script type="text/javascript" src="storage.js"></script>
 <script type="text/javascript" src="handles.js"></script>
 <script type="text/javascript" src="Show.js"></script>
 
@@ -25,9 +26,9 @@ function onLoad() {
 	});
 
     var orderedShowIds = Array();
-    for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
-        var showDataEntry = JSON.parse(localStorage.getItem(key));
+    for (var i = 0; i < showStorage.length(); i++) {
+        var key = showStorage.key(i);
+        var showDataEntry = showStorage.getItem(key);
 
         orderedShowIds[showDataEntry["order"]] = key;
     }
@@ -68,9 +69,9 @@ function saveNewOrder() {
     {
         var showId = $(this).attr("id");
 
-        var showDataEntry = JSON.parse(localStorage.getItem(showId));
+        var showDataEntry = showStorage.getItem(showId);
         showDataEntry["order"] = i;
-        localStorage.setItem(showId, JSON.stringify(showDataEntry));
+        showStorage.setItem(showId, showDataEntry);
     });
 }
 
@@ -87,8 +88,8 @@ function sortShows() {
     var shows = [];
     var showsWithoutAirDate = [];
     
-    for (var i = 0; i < localStorage.length; i++) {
-        var key = localStorage.key(i);
+    for (var i = 0; i < showStorage.length(); i++) {
+        var key = showStorage.key(i);
         var airsIn = getBackgroundHandle().getShowData(key).episodeToShowAirsInDays;
         
         if (airsIn == null) {

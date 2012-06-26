@@ -142,9 +142,9 @@ ShowData.prototype.adjustDayOffset = function (delta) {
         this.dayOffset += delta;
     }
 
-    var showEntry = JSON.parse(localStorage.getItem(this.id));
+    var showEntry = showStorage.getItem(this.id);
     showEntry.dayOffset = this.dayOffset;
-    localStorage.setItem(this.id, JSON.stringify(showEntry));
+    showStorage.setItem(this.id, showEntry);
 
     this.adjustEpisodeAirDates();
     this.getEpisodeToShow();
@@ -152,7 +152,7 @@ ShowData.prototype.adjustDayOffset = function (delta) {
 }
 
 ShowData.prototype.remove = function () {
-    localStorage.removeItem(this.id);
+    showStorage.removeItem(this.id);
     this.onDelete(this);
 }
 

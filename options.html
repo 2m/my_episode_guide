@@ -14,12 +14,25 @@ a {
     color: blue;
     text-decoration: underline;
 }
+
+p {
+    padding-bottom: 10px;
+}
+
+#main {
+    width: 600px;
+    margin: auto;
+}
 </style>
 </head>
 <body>
 
-<h1>My Episode Guide</h1>
-<p>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">Clearing the Show Cache</a>. All your show setting will be lost.</p>
+<div id="main">
+    <h1>My Episode Guide</h1>
+    <p>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">Clearing the Show Cache</a>. All your show settings will be lost.</p>
+    
+    <p>Shows are refreshed in the background every two hours.</p>
+</div>
 
 </body>
 </html>

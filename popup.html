@@ -2,12 +2,26 @@
 <html>
 <head>
 <link href="style.css" rel="stylesheet" type="text/css">
+<link href="jquery.autocomplete.css" rel="stylesheet" type="text/css">
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+<script type="text/javascript" src="jquery.autocomplete.js"></script>
+<script type="text/javascript" src="jquery.autocomplete.overrides.js"></script>
 <script type="text/javascript" src="handles.js"></script>
 <script type="text/javascript" src="Show.js"></script>
+
 <script>
 function onLoad() {
+	$("#showTitle").autocomplete("/url/to/backend", {
+		showResult: function(value, data) {
+			return '<div class="title">' + value + '</div><div class="info">' + data[0] + ' ' + data[1] + '</div>';
+		},
+		onItemSelect: function(item) {
+			$("#showTitle").val(item.data[2].replace(/_/g, ' '));
+			$("#newShowForm").submit();
+		}
+	});
+
     var orderedShowIds = Array();
     for (var i = 0; i < localStorage.length; i++) {
         var key = localStorage.key(i);
@@ -64,14 +78,59 @@ function makeShowsSortable() {
         }
     });
 }
+
+function sortShows() {
+    var shows = [];
+    var showsWithoutAirDate = [];
+    
+    for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        var airsIn = getBackgroundHandle().getShowData(key).episodeToShowAirsInDays;
+        
+        if (airsIn == null) {
+            showsWithoutAirDate.push({"showId": key, "airsIn": null});
+        }
+        else {
+            shows.push({"showId": key, "airsIn": airsIn});
+        }
+    }
+    
+    shows.sort(function(a, b) {
+        return a.airsIn - b.airsIn;        
+    });
+    
+    showsWithoutAirDate.sort(function(a, b) {
+        return a.showId.localeCompare(b.showId);
+    });
+    
+    var sortedShows = shows.concat(showsWithoutAirDate);
+    
+    for (var i = 0; i < sortedShows.length; i++) {
+        var showIds = sortedShows[i];
+        var showDom = $("#shows").children("#" + showIds.showId);
+        var showAfterDom = $("#shows > div").eq(i);
+        
+        if (showDom.attr("id") != showAfterDom.attr("id")) {
+            showDom.insertBefore(showAfterDom);
+        }
+    }
+    
+    saveNewOrder();
+}
+
+
 </script>
 </head>
 <body onload="onLoad()">
     <div id="contents">
         <div id="addShow">
-            <form onSubmit="addShow(); return false;">
-                <input id="showTitle" type="text" value="Enter show title" size="30" onfocus="this.value=''" />
+            <form id="newShowForm" onSubmit="addShow(); return false;">
+                <input id="showTitle" type="text" placeholder="Enter show title" size="25" />
                 <input type="submit" value="Add" />
+				<div id="links">
+					<span><a href="#" onClick="sortShows()">Order</a></span>
+					<span><a href="#">Refresh</a></span>
+				</div>
             </form>
         </div>
         <div id="shows"></div>

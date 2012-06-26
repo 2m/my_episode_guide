@@ -1,11 +1,12 @@
 body {
     font-family: Verdana;
     font-size: 13px;
+	min-height: 150px;
 }
 
 #contents {
     position: relative;
-    width: 310px;
+    width: 310px;	
 }
 
 #addShow #showTitle {
@@ -26,6 +27,19 @@ body {
 
 #episodes > div {
     display: none;
+}
+
+#links {
+	font-size: x-small;
+	text-decoration: underline;
+	width: 43px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+#links span {
+	/*float: left;*/
 }
 
 .show {

@@ -1,7 +1,7 @@
 function ShowData(title, dayOffset, onDelete, onGetDaysRemaining) {
 
     this.title = title;
-    this.id = title.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    this.id = title.toLowerCase().replace(/[^a-z0-9-]/g, '_');
     this.status = null;
     this.dayOffset = dayOffset;
     this.episodes = new Array();
@@ -37,9 +37,17 @@ ShowData.prototype.getData = function(callback) {
     return this;
 }
 
+/**
+	Some special shows that should test against,
+	if something to be changed here.
+		improv
+		Ultimate Spider-Man
+		Avengers: Earth's Mightiest Heroes
+		NCIS	
+*/
 ShowData.prototype.parseInfoResp = function(resp) {
     var titleRegExp = new RegExp('<h1>(.*)</h1>', "g");
-    var idRegExp = new RegExp('show/([A-Za-z0-9_]*)/season=all/english">All Seasons', "g");
+    var idRegExp = new RegExp('show/([A-Za-z0-9_-]*)/season=all/english">All Seasons', "g");
     var statusRegExp = new RegExp('<th width="170".*?>(.*)<', "g");
     var episodesRegExp = new RegExp('">([0-9]{1,2}x[0-9]{2}|Special).*?">(?:.*faint">)?(.*?)(?:</font>)?</a>.*?([0-9]{4}-[0-9]{2}-[0-9]{2}|\(unknown\))', "g");
 

@@ -60,10 +60,29 @@ function onLoad() {
 
 function addShow() {
     var showTitle = $("#addShow #showTitle").val().replace(/[^A-Za-z0-9 -]/g, '');
-    var showData = getBackgroundHandle().getNewShowData(showTitle);
+    
+    if (!alreadyAdded(showTitle)) {
+        var showData = getBackgroundHandle().getNewShowData(showTitle);
 
-    $("#addShow #showTitle").attr("disabled", "disabled");
-    $("#addShow #showTitle").addClass("spinner");
+        $("#addShow #showTitle").attr("disabled", "disabled");
+        $("#addShow #showTitle").addClass("spinner");
+    }
+    else {
+        enableInput();
+    }
+}
+
+function alreadyAdded(showTitle) {
+    var newShowId = showTitle.toLowerCase().replace(/ /g, '_')
+    
+    for (var i = 0; i < showHandles.length; i++) {
+        var storedShowId = showHandles[i].showData.id.toLowerCase();
+        if (storedShowId == newShowId) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function addShowToPage(showData) {

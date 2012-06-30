@@ -35,13 +35,22 @@ a {
     text-decoration: underline;
 }
 
-p, .setting {
-    padding-bottom: 10px;
+p {
+    padding-bottom: 6px;
+}
+
+.setting {
+    padding-bottom: 30px;
 }
 
 #main {
     width: 600px;
     margin: auto;
+}
+
+.title {
+    font-size: larger;
+    border-bottom: 1px #CCC solid;
 }
 
 </style>
@@ -56,7 +65,19 @@ p, .setting {
         <span>Refresh show data in the background every <input id="refreshHours" type="number" min="1" max="24" step="1"/> hour(s).</span>
     </div>
     
-    <p>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">Clearing the Show Cache</a>. All your show settings will be lost.</p>
+    <div class="setting">
+        <div class="title">Local storage</div>
+        <span>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">clearing local storage</a>. All your show settings will be lost.</span>
+    </div>
+    
+    <div class="setting">
+        <div class="title">Miscellaneous</div>
+        <p>Author: <a target="_blank" href="http://2m.lt">Martynas Mickevièius</a></p>
+        <p>Version: 1.2</p>
+        <p>Fork it on <a target="_blank" href="https://github.com/2m/my_episode_guide/">github</a>.</p>
+        <p>Request improvements or report any problems to the <a target="_blank" href="https://github.com/2m/my_episode_guide/issues">issue tracker</a>.</p>
+        <p>Data for all the shows comes from <a target="_blank" href="http://www.episodeworld.com">www.episodeworld.com</a>.</p>
+    </div>
 </div>
 
 </body>

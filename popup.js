@@ -33,7 +33,9 @@ function onLoad() {
     }
 
     for (var i = 0; i < orderedShowIds.length; i++) {
-        addShowToPage(getBackgroundHandle().getShowData(orderedShowIds[i]));
+        if (null != orderedShowIds[i]) {
+            addShowToPage(getBackgroundHandle().getShowData(orderedShowIds[i]));
+        }
         //console.log("on load "+orderedShowIds[i]);
     }
 

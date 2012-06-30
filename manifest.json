@@ -1,6 +1,6 @@
 {
   "name": "My Episode Guide",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "manifest_version": 2,
   "description": "Shows the next episode which is to be aired for your chosen TV shows. All information is taken from www.episodeworld.com.",
   "background": {

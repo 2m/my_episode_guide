@@ -403,20 +403,20 @@
                 self.dom.$elem.removeClass(self.options.loadingClass);
                 callback(parsed);
             };
-			self.executeRequest(filter, ajaxCallback);
+            self.executeRequest(filter, ajaxCallback);
         }
     };
-	
-	$.Autocompleter.prototype.executeRequest = function(filter, callback) {
-		$.ajax({
-			url: this.makeUrl(filter),
-			success: callback,
-			error: function() {
-				callback(false);
-			},
-			dataType: 'text'
-		});
-	};
+    
+    $.Autocompleter.prototype.executeRequest = function(filter, callback) {
+        $.ajax({
+            url: this.makeUrl(filter),
+            success: callback,
+            error: function() {
+                callback(false);
+            },
+            dataType: 'text'
+        });
+    };
 
     /**
      * Create or update an extra parameter for the remote request

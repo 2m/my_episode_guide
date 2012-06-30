@@ -38,12 +38,12 @@ ShowData.prototype.getData = function(callback) {
 }
 
 /**
-	Some special shows that should test against,
-	if something to be changed here.
-		improv
-		Ultimate Spider-Man
-		Avengers: Earth's Mightiest Heroes
-		NCIS	
+    Some special shows that should test against,
+    if something to be changed here.
+        improv
+        Ultimate Spider-Man
+        Avengers: Earth's Mightiest Heroes
+        NCIS    
 */
 ShowData.prototype.parseInfoResp = function(resp) {
     var titleRegExp = new RegExp('<h1>(.*)</h1>', "g");

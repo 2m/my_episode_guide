@@ -15,23 +15,23 @@
 var showHandles = [];
 
 function onLoad() {
-	$("#showTitle").autocomplete("/url/to/backend", {
+    $("#showTitle").autocomplete("/url/to/backend", {
         useCache: false,
         filterResults: false,
-		showResult: function(value, data) {
-			return '<div class="title">' + value + '</div><div class="info">' + data[0] + ' ' + data[1] + '</div>';
-		},
-		onItemSelect: function(item) {
-			$("#showTitle").val(item.data[2].replace(/_/g, ' '));
-			$("#newShowForm").submit();
-		},
+        showResult: function(value, data) {
+            return '<div class="title">' + value + '</div><div class="info">' + data[0] + ' ' + data[1] + '</div>';
+        },
+        onItemSelect: function(item) {
+            $("#showTitle").val(item.data[2].replace(/_/g, ' '));
+            $("#newShowForm").submit();
+        },
         onOpen: function(ulEl) {
             $("body").height($(".acResults").height() + 20);            
         },
         onFinish: function() {
             $("body").height("");
         }
-	});
+    });
 
     var orderedShowIds = Array();
     for (var i = 0; i < showStorage.length(); i++) {
@@ -159,10 +159,10 @@ function refresh() {
             <form id="newShowForm" onSubmit="addShow(); return false;">
                 <input id="showTitle" type="text" placeholder="Enter show title" size="25" />
                 <input type="submit" value="Add" />
-				<div id="links">
-					<span><a href="#" onClick="sortShows()">Order</a></span>
-					<span><a href="#" onClick="refresh()">Refresh</a></span>
-				</div>
+                <div id="links">
+                    <span><a href="#" onClick="sortShows()">Order</a></span>
+                    <span><a href="#" onClick="refresh()">Refresh</a></span>
+                </div>
             </form>
         </div>
         <div id="shows"></div>

@@ -1,23 +1,23 @@
 (function($) {
     "use strict";
-	
-	$.Autocompleter.prototype.executeRequest = function(filter, callback) {
-		
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", "http://www.episodeworld.com/search/?searchitem=" + filter, true);
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 4) {
-				callback(parseResponse(xhr.responseText));
-			}
-		}
-		xhr.send();
-	};
-	
-	/**
-		Some searches redirect to the specific show.
-			house
-			klaus
-	*/
+    
+    $.Autocompleter.prototype.executeRequest = function(filter, callback) {
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://www.episodeworld.com/search/?searchitem=" + filter, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                callback(parseResponse(xhr.responseText));
+            }
+        }
+        xhr.send();
+    };
+    
+    /**
+        Some searches redirect to the specific show.
+            house
+            klaus
+    */
     function parseResponse(response) {
         var redirectRegExp = new RegExp('Show Summary', "g");
         
@@ -34,7 +34,7 @@
             var idRegExp = new RegExp('<a href="/show/(.*)"><b>', "g");
         }
 
-		var returnString = "";
+        var returnString = "";
         
         var title;
         while ((title = titleRegExp.exec(response))) {
@@ -42,10 +42,10 @@
             var status = statusRegExp.exec(response);
             var id = idRegExp.exec(response);
         
-            returnString += title[1] + "|" + year[1] + "|" + status[1] + "|" + id[1] + "\n";			
+            returnString += title[1] + "|" + year[1] + "|" + status[1] + "|" + id[1] + "\n";            
         }
 
-		return returnString;
-	}
-	
+        return returnString;
+    }
+    
 })(jQuery);

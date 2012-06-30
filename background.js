@@ -25,16 +25,24 @@ function onNewShowDataParsed(showData) {
     showStorage.setItem(showData.id, showDataEntry);
     showDataHandles[showData.id] = showData;
 
-    getPopupHandle().addShowToPage(showData);
-    getPopupHandle().saveNewOrder();
-    getPopupHandle().enableInput();
+    var popupHandle = getPopupHandle();
+    if (null != popupHandle) {
+        popupHandle.addShowToPage(showData);
+        popupHandle.saveNewOrder();
+        popupHandle.enableInput();
+    }
+    
     getDaysToNextEpisode();
 }
 
 function onShowDelete(showData) {
     showDataHandles[showData.title] = null;
     getDaysToNextEpisode();
-    getPopupHandle().saveNewOrder();
+    
+    var popupHandle = getPopupHandle();
+    if (null != popupHandle) {
+        popupHandle.saveNewOrder();
+    }
 }
 
 function onGetDaysRemaining(showData) {

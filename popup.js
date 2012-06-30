@@ -29,14 +29,17 @@ function onLoad() {
         var key = showStorage.key(i);
         var showDataEntry = showStorage.getItem(key);
 
-        orderedShowIds[showDataEntry["order"]] = key;
+        var j = showDataEntry["order"];
+        while (null != orderedShowIds[j]) {
+            j++;
+        }
+        orderedShowIds[j] = key;
     }
 
     for (var i = 0; i < orderedShowIds.length; i++) {
         if (null != orderedShowIds[i]) {
             addShowToPage(getBackgroundHandle().getShowData(orderedShowIds[i]));
         }
-        //console.log("on load "+orderedShowIds[i]);
     }
 
     makeShowsSortable();

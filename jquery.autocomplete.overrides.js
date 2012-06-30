@@ -2,7 +2,6 @@
     "use strict";
 	
 	$.Autocompleter.prototype.executeRequest = function(filter, callback) {
-		console.log(filter);
 		
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", "http://www.episodeworld.com/search/?searchitem=" + filter, true);

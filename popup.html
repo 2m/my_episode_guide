@@ -92,13 +92,16 @@ function sortShows() {
     
     for (var i = 0; i < showStorage.length(); i++) {
         var key = showStorage.key(i);
-        var airsIn = getBackgroundHandle().getShowData(key).episodeToShowAirsInDays;
+        
+        var showData = getBackgroundHandle().getShowData(key);
+        var title = showData.title;
+        var airsIn = showData.episodeToShowAirsInDays;
         
         if (airsIn == null) {
-            showsWithoutAirDate.push({"showId": key, "airsIn": null});
+            showsWithoutAirDate.push({"showId": key, "airsIn": null, 'title': title});
         }
         else {
-            shows.push({"showId": key, "airsIn": airsIn});
+            shows.push({"showId": key, "airsIn": airsIn, 'title': title});
         }
     }
     
@@ -107,7 +110,7 @@ function sortShows() {
     });
     
     showsWithoutAirDate.sort(function(a, b) {
-        return a.showId.localeCompare(b.showId);
+        return a.title.localeCompare(b.title);
     });
     
     var sortedShows = shows.concat(showsWithoutAirDate);

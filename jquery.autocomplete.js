@@ -40,6 +40,7 @@
         filterResults: true,
         sortResults: true,
         sortFunction: null,
+        onOpen: null,
         onItemSelect: null,
         onNoMatch: null,
         onFinish: null,
@@ -724,6 +725,8 @@
             this.focusItem($first);
         }
         this.active_ = true;
+        
+        this.callHook('onOpen', { });
     };
 
     $.Autocompleter.prototype.showResult = function(value, data) {

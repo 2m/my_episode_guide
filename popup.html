@@ -24,7 +24,13 @@ function onLoad() {
 		onItemSelect: function(item) {
 			$("#showTitle").val(item.data[2].replace(/_/g, ' '));
 			$("#newShowForm").submit();
-		}
+		},
+        onOpen: function(ulEl) {
+            $("body").height($(".acResults").height() + 20);            
+        },
+        onFinish: function() {
+            $("body").height("");
+        }
 	});
 
     var orderedShowIds = Array();

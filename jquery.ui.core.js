@@ -223,7 +223,7 @@ $.extend( $.expr[ ":" ], {
 // support
 $(function() {
 	var body = document.body,
-		div = body.appendChild( div = document.createElement( "div" ) );
+		div = document.createElement( "div" );
 
 	// access offsetHeight before setting the style to prevent a layout bug
 	// in IE 9 which causes the elemnt to continue to take up space even
@@ -239,10 +239,6 @@ $(function() {
 
 	$.support.minHeight = div.offsetHeight === 100;
 	$.support.selectstart = "onselectstart" in div;
-
-	// set display to none to avoid a layout bug in IE
-	// http://dev.jquery.com/ticket/4014
-	body.removeChild( div ).style.display = "none";
 });
 
 

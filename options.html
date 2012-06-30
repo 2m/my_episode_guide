@@ -2,33 +2,6 @@
 <html>
 <head>
 <link href="style.css" rel="stylesheet" type="text/css">
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<script type="text/javascript" src="storage.js"></script>
-<script type="text/javascript" src="handles.js"></script>
-<script>
-function clearCache() {
-    localStorage.clear();
-    loadDefaultSettings(settingsStorage);
-    
-    getBackgroundHandle().draw();
-}
-
-$(function() {
-    $("#refreshHours").keyup(function() {
-        updateRefreshInterval;
-    }).click(function() {
-        updateRefreshInterval();
-    });
-    
-    $("#refreshHours").val(settingsStorage.getItem("refreshInterval") / (1000 * 60 * 60));
-});
-
-function updateRefreshInterval() {
-    settingsStorage.setItem("refreshInterval", $("#refreshHours").val() * 60 * 60 * 1000);
-    getBackgroundHandle().startRefreshTimer();
-}
-
-</script>
 <style>
 a {
     color: blue;
@@ -67,7 +40,7 @@ p {
     
     <div class="setting">
         <div class="title">Local storage</div>
-        <span>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">clearing local storage</a>. All your show settings will be lost.</span>
+        <span>If you have any problems after version upgrade, or want to reset your shows, try <a id="clearCacheButton" href="">clearing local storage</a>. All your show settings will be lost.</span>
     </div>
     
     <div class="setting">
@@ -80,5 +53,9 @@ p {
     </div>
 </div>
 
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="storage.js"></script>
+<script type="text/javascript" src="handles.js"></script>
+<script type="text/javascript" src="options.js"></script>
 </body>
 </html>

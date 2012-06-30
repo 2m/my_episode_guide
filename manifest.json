@@ -1,11 +1,14 @@
 {
   "name": "My Episode Guide",
-  "version": "1.1",
+  "version": "1.2",
+  "manifest_version": 2,
   "description": "Shows the next episode which is to be aired for your chosen TV shows. All information is taken from www.episodeworld.com.",
-  "background_page": "background.html",
+  "background": {
+    "page": "background.html"
+  },
   "browser_action": {
     "default_icon": "images/sunglasses.gif",
-    "popup": "popup.html"
+    "default_popup": "popup.html"
   },
   "icons": { "16": "images/icon16.png", "48": "images/icon48.png", "128": "images/icon128.png" },
   "permissions": [

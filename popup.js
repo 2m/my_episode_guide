@@ -2,13 +2,9 @@ var showHandles = [];
 
 (function($) {
     onLoad();
-    console.log($("#showTitle"));
 })(jQuery);
 
 function onLoad() {
-    console.log($("#showTitle", document));
-    console.log(document);
-  
     $("#showTitle").autocomplete("/url/to/backend", {
         useCache: false,
         filterResults: false,

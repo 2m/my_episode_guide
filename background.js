@@ -79,7 +79,6 @@ function refreshInBackground() {
     if (getPopupHandle() != null) {
         // do not do refresh if popup is open,
         // background page does not know how to update dom
-        console.log("returning");
         return;
     }
 

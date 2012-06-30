@@ -8,6 +8,7 @@ function onLoad() {
     $("#showTitle").autocomplete("/url/to/backend", {
         useCache: false,
         filterResults: false,
+        maxItemsToShow: 15,
         showResult: function(value, data) {
             return '<div class="title">' + value + '</div><div class="info">' + data[0] + ' ' + data[1] + '</div>';
         },

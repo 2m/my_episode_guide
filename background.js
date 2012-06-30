@@ -12,8 +12,8 @@ function onLoad() {
     }
 }
 
-function getShowData(title) {
-    return showDataHandles[title];
+function getShowData(id) {
+    return showDataHandles[id];
 }
 
 function alreadyAdded(newShowId) {
@@ -47,7 +47,7 @@ function onNewShowDataParsed(showData) {
 }
 
 function onShowDelete(showData) {
-    delete showDataHandles[showData.title];
+    delete showDataHandles[showData.id];
     getDaysToNextEpisode();
     
     var popupHandle = getPopupHandle();

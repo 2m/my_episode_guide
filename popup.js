@@ -60,8 +60,9 @@ function onLoad() {
 
 function addShow() {
     var showTitle = $("#addShow #showTitle").val().replace(/[^A-Za-z0-9 -]/g, '');
+    var showId = showTitle.replace(/ /g, '_');
     
-    if (!alreadyAdded(showTitle)) {
+    if (!getBackgroundHandle().alreadyAdded(showTitle)) {
         var showData = getBackgroundHandle().getNewShowData(showTitle);
 
         $("#addShow #showTitle").attr("disabled", "disabled");
@@ -70,19 +71,6 @@ function addShow() {
     else {
         enableInput();
     }
-}
-
-function alreadyAdded(showTitle) {
-    var newShowId = showTitle.toLowerCase().replace(/ /g, '_')
-    
-    for (var i = 0; i < showHandles.length; i++) {
-        var storedShowId = showHandles[i].showData.id.toLowerCase();
-        if (storedShowId == newShowId) {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 function addShowToPage(showData) {

@@ -16,6 +16,17 @@ function getShowData(title) {
     return showDataHandles[title];
 }
 
+function alreadyAdded(newShowId) {
+    for (var key in showDataHandles) {
+        var storedShowId = showDataHandles[key].id;
+        if (storedShowId.toLowerCase() == newShowId.toLowerCase()) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function getNewShowData(title) {
     return new ShowData(title, 0, onShowDelete, onGetDaysRemaining).getData(onNewShowDataParsed);
 }
@@ -36,7 +47,7 @@ function onNewShowDataParsed(showData) {
 }
 
 function onShowDelete(showData) {
-    showDataHandles[showData.title] = null;
+    delete showDataHandles[showData.title];
     getDaysToNextEpisode();
     
     var popupHandle = getPopupHandle();

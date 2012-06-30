@@ -62,7 +62,7 @@ function addShow() {
     var showTitle = $("#addShow #showTitle").val().replace(/[^A-Za-z0-9 -]/g, '');
     var showId = showTitle.replace(/ /g, '_');
     
-    if (!getBackgroundHandle().alreadyAdded(showTitle)) {
+    if (!getBackgroundHandle().alreadyAdded(showId)) {
         var showData = getBackgroundHandle().getNewShowData(showTitle);
 
         $("#addShow #showTitle").attr("disabled", "disabled");

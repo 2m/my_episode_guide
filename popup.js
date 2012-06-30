@@ -51,10 +51,12 @@ function onLoad() {
     
     $("#sortButton").click(function() {
         sortShows();
+        return false;
     });
     
     $("#refreshButton").click(function() {
         refresh();
+        return false;
     });
 }
 

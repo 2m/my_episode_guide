@@ -16,6 +16,8 @@ var showHandles = [];
 
 function onLoad() {
 	$("#showTitle").autocomplete("/url/to/backend", {
+        useCache: false,
+        filterResults: false,
 		showResult: function(value, data) {
 			return '<div class="title">' + value + '</div><div class="info">' + data[0] + ' ' + data[1] + '</div>';
 		},

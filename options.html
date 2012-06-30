@@ -2,12 +2,32 @@
 <html>
 <head>
 <link href="style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="storage.js"></script>
 <script type="text/javascript" src="handles.js"></script>
 <script>
 function clearCache() {
     localStorage.clear();
+    loadDefaultSettings(settingsStorage);
+    
     getBackgroundHandle().draw();
 }
+
+$(function() {
+    $("#refreshHours").keyup(function() {
+        updateRefreshInterval;
+    }).click(function() {
+        updateRefreshInterval();
+    });
+    
+    $("#refreshHours").val(settingsStorage.getItem("refreshInterval") / (1000 * 60 * 60));
+});
+
+function updateRefreshInterval() {
+    settingsStorage.setItem("refreshInterval", $("#refreshHours").val() * 60 * 60 * 1000);
+    getBackgroundHandle().startRefreshTimer();
+}
+
 </script>
 <style>
 a {
@@ -15,7 +35,7 @@ a {
     text-decoration: underline;
 }
 
-p {
+p, .setting {
     padding-bottom: 10px;
 }
 
@@ -23,15 +43,20 @@ p {
     width: 600px;
     margin: auto;
 }
+
 </style>
 </head>
 <body>
 
 <div id="main">
     <h1>My Episode Guide</h1>
-    <p>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">Clearing the Show Cache</a>. All your show settings will be lost.</p>
     
-    <p>Shows are refreshed in the background every two hours.</p>
+    <div class="setting">
+        <div class="title">Background auto-refresh</div>
+        <span>Refresh show data in the background every <input id="refreshHours" type="number" min="1" max="24" step="1"/> hour(s).</span>
+    </div>
+    
+    <p>If you have any problems after version upgrade, or want to reset your shows, try <a href="" onclick="clearCache()">Clearing the Show Cache</a>. All your show settings will be lost.</p>
 </div>
 
 </body>

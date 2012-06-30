@@ -64,6 +64,12 @@ SimpleStorage.prototype.length = function() {
     return Object.keys(storage).length;
 }
 
+function loadDefaultSettings(settingsStorage) {
+    if (null == settingsStorage.getItem("refreshInterval")) {
+        settingsStorage.setItem("refreshInterval", 2 * 60 * 60 * 1000); // 2 hours
+    }
+}
+
 function migrateToShowStorage() {
     if (localStorage.length > 0 && localStorage.getItem("shows") == null) {
         var showMap = {};
@@ -81,3 +87,8 @@ function migrateToShowStorage() {
 }
 
 var showStorage = new SimpleStorage("shows");
+migrateToShowStorage();
+
+var settingsStorage = new SimpleStorage("settings");
+
+loadDefaultSettings(settingsStorage);

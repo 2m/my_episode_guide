@@ -75,7 +75,9 @@ function migrateToShowStorage() {
         var showMap = {};
         for (i = 0; i < localStorage.length; i++) {
             var key = localStorage.key(i);
-            showMap[key] = JSON.parse(localStorage.getItem(key));            
+            if (key != "settings") {
+                showMap[key] = JSON.parse(localStorage.getItem(key));            
+            }
         }
         
         localStorage.clear();

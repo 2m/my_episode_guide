@@ -195,7 +195,7 @@ Show.prototype.fillInfo = function () {
         return;
     }
 
-    this.showTitleEl.attr("href", "http://www.episodeworld.com/show/"+this.showData.id);
+    this.showTitleEl.attr("href", "http://www.episodeworld.com/show/"+this.showData.ewId);
     this.showTitleEl.html(this.showData.title);
 
     if (this.showData.episodeToShow == null) {

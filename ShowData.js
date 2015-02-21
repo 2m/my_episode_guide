@@ -1,7 +1,9 @@
 function ShowData(title, dayOffset, onDelete, onGetDaysRemaining) {
 
     this.title = title;
-    this.id = title.toLowerCase().replace(/[^a-z0-9-]/g, '_');
+    this.ewId = title.toLowerCase().replace(/[^a-z0-9-]/g, '_');
+    // Make sure id always starts with a letter. Leading numbers make CSS selectors sad.
+    this.id = "id_" + title.toLowerCase().replace(/[^a-z0-9-]/g, '_');
     this.status = null;
     this.dayOffset = dayOffset;
     this.episodes = new Array();
@@ -19,7 +21,7 @@ ShowData.prototype.getData = function(callback) {
     var thisShow = this;
 
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://www.episodeworld.com/show/"+this.id+"/season=all/english", true);
+    xhr.open("GET", "http://www.episodeworld.com/show/"+this.ewId+"/season=all/english", true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState == 4) {
             thisShow.parseInfoResp(xhr.responseText);
@@ -43,11 +45,11 @@ ShowData.prototype.getData = function(callback) {
         improv
         Ultimate Spider-Man
         Avengers: Earth's Mightiest Heroes
-        NCIS    
+        NCIS
 */
 ShowData.prototype.parseInfoResp = function(resp) {
     var titleRegExp = new RegExp('<h1>(.*)</h1>', "g");
-    var idRegExp = new RegExp('show/([A-Za-z0-9_-]*)/season=all/english">All Seasons', "g");
+    var ewIdRegExp = new RegExp('show/([A-Za-z0-9_-]*)/season=all/english">All Seasons', "g");
     var statusRegExp = new RegExp('<th width="170".*?>(.*)<', "g");
     var episodesRegExp = new RegExp('">([0-9]{1,2}x[0-9]{2}|Special).*?">(?:.*faint">)?(.*?)(?:</font>)?</a>.*?([0-9]{4}-[0-9]{2}-[0-9]{2}|\(unknown\))', "g");
 
@@ -61,8 +63,8 @@ ShowData.prototype.parseInfoResp = function(resp) {
     var title = titleRegExp.exec(resp);
     this.title = title[1];
 
-    var id = idRegExp.exec(resp);
-    this.id = id[1];
+    var ewId = ewIdRegExp.exec(resp);
+    this.ewId = ewId[1];
 
     var episode;
     this.episodes = [];

@@ -7,7 +7,7 @@
 function clearCache() {
     localStorage.clear();
     loadDefaultSettings(settingsStorage);
-    
+
     getBackgroundHandle().draw();
 }
 
@@ -17,11 +17,14 @@ $(function() {
     }).click(function() {
         updateRefreshInterval();
     });
-    
-    $("#refreshHours").val(settingsStorage.getItem("refreshInterval") / (1000 * 60 * 60));
+
+    settingsStorage.withItem("refreshInterval", function(refreshInterval) {
+        $("#refreshHours").val(refreshInterval / (1000 * 60 * 60));
+    });
 });
 
 function updateRefreshInterval() {
-    settingsStorage.setItem("refreshInterval", $("#refreshHours").val() * 60 * 60 * 1000);
-    getBackgroundHandle().startRefreshTimer();
+    settingsStorage.setItem("refreshInterval", $("#refreshHours").val() * 60 * 60 * 1000, function() {
+        getBackgroundHandle().startRefreshTimer();
+    });
 }

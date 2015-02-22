@@ -1,19 +1,14 @@
-function ShowData(title, dayOffset, onDelete, onGetDaysRemaining) {
+function ShowData(id, ewId, dayOffset) {
 
-    this.title = title;
-    this.ewId = title.toLowerCase().replace(/[^a-z0-9-]/g, '_');
-    // Make sure id always starts with a letter. Leading numbers make CSS selectors sad.
-    this.id = "id_" + title.toLowerCase().replace(/[^a-z0-9-]/g, '_');
+    this.id = id;
+    this.ewId = ewId;
+
     this.status = null;
     this.dayOffset = dayOffset;
     this.episodes = new Array();
 
     this.episodeToShow = null;
     this.episodeToShowAirsInDays = null;
-
-    // callback on delete and episodeToShow change
-    this.onDelete = onDelete;
-    this.onGetDaysRemaining = onGetDaysRemaining;
 }
 
 ShowData.prototype.getData = function(callback) {
@@ -29,9 +24,7 @@ ShowData.prototype.getData = function(callback) {
             thisShow.getEpisodeToShow();
             thisShow.getDaysUntilEpisodeToShow();
 
-            if (callback != null) {
-                callback(thisShow);
-            }
+            typeof callback === 'function' && callback(thisShow);
         }
     }
     xhr.send();
@@ -49,7 +42,6 @@ ShowData.prototype.getData = function(callback) {
 */
 ShowData.prototype.parseInfoResp = function(resp) {
     var titleRegExp = new RegExp('<h1>(.*)</h1>', "g");
-    var ewIdRegExp = new RegExp('show/([A-Za-z0-9_-]*)/season=all/english">All Seasons', "g");
     var statusRegExp = new RegExp('<th width="170".*?>(.*)<', "g");
     var episodesRegExp = new RegExp('">([0-9]{1,2}x[0-9]{2}|Special).*?">(?:.*faint">)?(.*?)(?:</font>)?</a>.*?([0-9]{4}-[0-9]{2}-[0-9]{2}|\(unknown\))', "g");
 
@@ -62,9 +54,6 @@ ShowData.prototype.parseInfoResp = function(resp) {
 
     var title = titleRegExp.exec(resp);
     this.title = title[1];
-
-    var ewId = ewIdRegExp.exec(resp);
-    this.ewId = ewId[1];
 
     var episode;
     this.episodes = [];
@@ -107,8 +96,6 @@ ShowData.prototype.getDaysUntilEpisodeToShow = function() {
 
         this.episodeToShowAirsInDays = Math.ceil((this.episodeToShow.adjustedAirDate.getTime() - todayDate.getTime()) / (one_day));
     }
-
-    this.onGetDaysRemaining(this);
 }
 
 ShowData.prototype.formatTimeRemaining = function () {
@@ -136,18 +123,26 @@ ShowData.prototype.formatTimeRemaining = function () {
 }
 
 ShowData.prototype.adjustDayOffset = function (delta) {
-
+    var newDayOffset = this.dayOffset;
     if (delta == null) {
-        this.dayOffset = 0;
+        newDayOffset = 0;
     }
     else {
-        this.dayOffset += delta;
+        newDayOffset += delta;
     }
 
-    var showEntry = showStorage.getItem(this.id);
-    showEntry.dayOffset = this.dayOffset;
-    showStorage.setItem(this.id, showEntry);
+    var modifier = function(dayOffset) {
+        return function(item) {
+            item.dayOffset = dayOffset;
+            return item;
+        }
+    }
 
+    showStorage.modifyItem(this.id, modifier(newDayOffset));
+}
+
+ShowData.prototype.onAdjustDayOffset = function (dayOffset) {
+    this.dayOffset = dayOffset;
     this.adjustEpisodeAirDates();
     this.getEpisodeToShow();
     this.getDaysUntilEpisodeToShow();
@@ -155,7 +150,6 @@ ShowData.prototype.adjustDayOffset = function (delta) {
 
 ShowData.prototype.remove = function () {
     showStorage.removeItem(this.id);
-    this.onDelete(this);
 }
 
 function Episode(number, title, airDate) {

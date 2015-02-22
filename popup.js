@@ -1,4 +1,4 @@
-var showHandles = [];
+var showHandles = {};
 
 (function($) {
     onLoad();
@@ -10,24 +10,30 @@ function onLoad() {
         filterResults: false,
         maxItemsToShow: 15,
         showResult: function(value, data) {
-            return '<div class="title">' + value + '</div><div class="info">' + data[0] + ' ' + data[1] + '</div>';
+            var year = data[0];
+            var status = data[1];
+            return '<div class="title">' + value + '</div><div class="info">' + year + ' ' + status + '</div>';
         },
         onItemSelect: function(item) {
-            $("#showTitle").val(item.data[2].replace(/_/g, ' '));
+            var ewId = item.data[2];
+            $("#showTitle").val(ewId);
             $("#newShowForm").submit();
         },
         onOpen: function(ulEl) {
-            $("body").height($(".acResults").height() + 20);            
+            $("body").height($(".acResults").height() + 20);
         },
         onFinish: function() {
             $("body").height("");
         }
     });
 
+    showStorage.withAllItems(addShowsToPage);
+}
+
+function addShowsToPage(shows) {
     var orderedShowIds = Array();
-    for (var i = 0; i < showStorage.length(); i++) {
-        var key = showStorage.key(i);
-        var showDataEntry = showStorage.getItem(key);
+    for (var key in shows) {
+        var showDataEntry = shows[key];
 
         var j = showDataEntry["order"];
         while (null != orderedShowIds[j]) {
@@ -43,17 +49,17 @@ function onLoad() {
     }
 
     makeShowsSortable();
-    
+
     $("#newShowForm").submit(function() {
         addShow();
         return false;
     });
-    
+
     $("#sortButton").click(function() {
-        sortShows();
+        showStorage.withAllItems(sortShows);
         return false;
     });
-    
+
     $("#refreshButton").click(function() {
         refresh();
         return false;
@@ -61,11 +67,13 @@ function onLoad() {
 }
 
 function addShow() {
-    var showTitle = $("#addShow #showTitle").val().replace(/[^A-Za-z0-9 -]/g, '');
-    var showId = showTitle.replace(/ /g, '_');
-    
+    var ewId = $("#addShow #showTitle").val()
+    // Make sure id always starts with a letter. Leading numbers make CSS selectors sad.
+    var showId = "id_" + ewId.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/ /g, '_');
+
     if (showId != "" && !getBackgroundHandle().alreadyAdded(showId)) {
-        var showData = getBackgroundHandle().getNewShowData(showTitle);
+        var showDataEntry = {ewId: ewId, dayOffset: 0, order: 0};
+        showStorage.setItem(showId, showDataEntry);
 
         $("#addShow #showTitle").attr("disabled", "disabled");
         $("#addShow #showTitle").addClass("spinner");
@@ -80,8 +88,8 @@ function addShowToPage(showData) {
     show.init();
     show.appendShowTo("shows");
     show.appendEpisodesTo("episodes");
-    
-    showHandles.push(show);
+
+    showHandles[showData.id] = show;
 }
 
 function enableInput() {
@@ -91,13 +99,23 @@ function enableInput() {
 }
 
 function saveNewOrder() {
+    var orders = {};
     $("#shows").find(".show").each(function(i)
     {
         var showId = $(this).attr("id");
+        orders[showId] = i;
 
-        var showDataEntry = showStorage.getItem(showId);
-        showDataEntry["order"] = i;
-        showStorage.setItem(showId, showDataEntry);
+    }).promise().done(function(){
+        storeNewOrder(orders);
+    });
+}
+
+function storeNewOrder(orders) {
+    showStorage.modifyAllItems(function(allShows) {
+        for (var key in allShows) {
+            allShows[key].order = orders[key];
+        }
+        return allShows;
     });
 }
 
@@ -110,17 +128,15 @@ function makeShowsSortable() {
     });
 }
 
-function sortShows() {
+function sortShows(storedShows) {
     var shows = [];
     var showsWithoutAirDate = [];
-    
-    for (var i = 0; i < showStorage.length(); i++) {
-        var key = showStorage.key(i);
-        
+
+    for (var key in storedShows) {
         var showData = getBackgroundHandle().getShowData(key);
         var title = showData.title;
         var airsIn = showData.episodeToShowAirsInDays;
-        
+
         if (airsIn == null) {
             showsWithoutAirDate.push({"showId": key, "airsIn": null, 'title': title});
         }
@@ -128,43 +144,58 @@ function sortShows() {
             shows.push({"showId": key, "airsIn": airsIn, 'title': title});
         }
     }
-    
+
     shows.sort(function(a, b) {
-        return a.airsIn - b.airsIn;        
+        return a.airsIn - b.airsIn;
     });
-    
+
     showsWithoutAirDate.sort(function(a, b) {
         return a.title.localeCompare(b.title);
     });
-    
+
     var sortedShows = shows.concat(showsWithoutAirDate);
-    
+    var orders = {};
     for (var i = 0; i < sortedShows.length; i++) {
-        var showIds = sortedShows[i];
-        var showDom = $("#shows").children("#" + showIds.showId);
-        var showAfterDom = $("#shows > div").eq(i);
-        
-        if (showDom.attr("id") != showAfterDom.attr("id")) {
-            showDom.insertBefore(showAfterDom);
-        }
+        orders[sortedShows[i].showId] = i;
     }
-    
-    saveNewOrder();
+    storeNewOrder(orders);
+}
+
+function onSortShows() {
+    showStorage.withAllItems(function(allShows) {
+        var sortedShows = [];
+        for (var key in allShows) {
+            sortedShows.push({showId: key, order: allShows[key].order});
+        }
+        sortedShows.sort(function(a, b) {
+            return a.order - b.order;
+        });
+
+        for (var i = 0; i < sortedShows.length; i++) {
+            var showId = sortedShows[i].showId;
+            var showDom = $("#shows").children("#" + showId);
+            var showAfterDom = $("#shows > div").eq(i);
+
+            if (showDom.attr("id") != showAfterDom.attr("id")) {
+                showDom.insertBefore(showAfterDom);
+            }
+        }
+    });
 }
 
 function refresh() {
-    for (var i = 0; i < showHandles.length; i++) {
+    for (key in showHandles) {
         (function(showHandle) {
             // clear the style first,
             // because sometimes animations get stuck in the middle
             showHandle.rootEl.attr("style", "");
-            
+
             showHandle.rootEl.addClass("loading", 100);
-            showHandle.showData.getData(function() {                
+            showHandle.showData.getData(function() {
                 showHandle.fillInfo();
                 showHandle.rootEl.removeClass("loading", 500, 'easeOutBounce')
                 getBackgroundHandle().getDaysToNextEpisode();
             });
-        })(showHandles[i]);
+        })(showHandles[key]);
     }
 }

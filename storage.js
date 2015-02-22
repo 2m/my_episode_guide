@@ -2,12 +2,22 @@ function SimpleStorage(id) {
     this.storageId = id;
 }
 
-SimpleStorage.prototype.getStorage = function(id) {
-    return JSON.parse(localStorage.getItem(this.storageId));
+SimpleStorage.prototype.getStorage = function(userCallback) {
+    var storageCallback = function(storageId) {
+        return function(data) {
+            if (data[storageId] === undefined) {
+                data[storageId] = {};
+            }
+            userCallback(data[storageId]);
+        }
+    }
+    chrome.storage.sync.get(this.storageId, storageCallback(this.storageId));
 }
 
-SimpleStorage.prototype.setStorage = function(storage) {
-    localStorage.setItem(this.storageId, JSON.stringify(storage));
+SimpleStorage.prototype.setStorage = function(storage, callback) {
+    var request = {};
+    request[this.storageId] = storage;
+    chrome.storage.sync.set(request, callback);
 }
 
 SimpleStorage.prototype.getItem = function(id) {
@@ -16,81 +26,91 @@ SimpleStorage.prototype.getItem = function(id) {
     if (storage == null) {
         return null;
     }
-    
+
     return storage[id];
 }
 
-SimpleStorage.prototype.setItem = function(id, item) {
-    var storage = this.getStorage();
-
-    if (storage == null) {
-        storage = {};
+SimpleStorage.prototype.setItem = function(id, item, callback) {
+    var storageCallback = function(_this) {
+        return function(storage) {
+            storage[id] = item;
+            _this.setStorage(storage, callback);
+        }
     }
-    
-    storage[id] = item;
-    
-    this.setStorage(storage);
+
+    var storage = this.getStorage(storageCallback(this));
 }
 
-SimpleStorage.prototype.removeItem = function(id) {
-    var storage = this.getStorage();
-
-    if (storage == null) {
-        return null;
+SimpleStorage.prototype.removeItem = function(id, callback) {
+    var storageCallback = function(_this) {
+        return function(storage) {
+            delete storage[id];
+            _this.setStorage(storage, callback);
+        }
     }
-    
-    delete storage[id];
-    
-    this.setStorage(storage);
+
+    this.getStorage(storageCallback(this));
 }
 
-SimpleStorage.prototype.key = function(index) {
-    var storage = this.getStorage();
-
-    if (storage == null) {
-        return null;
+SimpleStorage.prototype.modifyItem = function(id, modifier, callback) {
+    var storageCallback = function(_this) {
+        return function(storage) {
+            storage[id] = modifier(storage[id]);
+            _this.setStorage(storage, callback);
+        }
     }
-    
-    return Object.keys(storage)[index];
+
+    this.getStorage(storageCallback(this));
 }
 
-SimpleStorage.prototype.length = function() {
-    var storage = this.getStorage();
-
-    if (storage == null) {
-        return 0;
+SimpleStorage.prototype.modifyAllItems = function(modifier, callback) {
+    var storageCallback = function(_this) {
+        return function(storage) {
+            _this.setStorage(modifier(storage), callback);
+        }
     }
-    
-    return Object.keys(storage).length;
+
+    this.getStorage(storageCallback(this));
+}
+
+SimpleStorage.prototype.withItem = function(id, callback) {
+    this.getStorage(function(storage) {
+        callback(storage[id]);
+    });
+}
+
+SimpleStorage.prototype.withAllItems = function(callback) {
+    this.getStorage(callback);
+}
+
+SimpleStorage.prototype.addOnChangeCallback = function(callback) {
+    var listener = function(_this) {
+        return function(changes, areaName) {
+            if (areaName != "sync") {
+                return;
+            }
+
+            if (changes[_this.storageId] === undefined) {
+                return;
+            }
+
+            callback(changes[_this.storageId].newValue, changes[_this.storageId].oldValue);
+        }
+    }
+
+    chrome.storage.onChanged.addListener(listener(this));
 }
 
 function loadDefaultSettings(settingsStorage) {
-    if (null == settingsStorage.getItem("refreshInterval")) {
-        settingsStorage.setItem("refreshInterval", 2 * 60 * 60 * 1000); // 2 hours
-    }
-}
-
-function migrateToShowStorage() {
-    if (localStorage.length > 0 && localStorage.getItem("shows") == null) {
-        var showMap = {};
-        for (i = 0; i < localStorage.length; i++) {
-            var key = localStorage.key(i);
-            if (key != "settings") {
-                showMap[key] = JSON.parse(localStorage.getItem(key));            
-            }
+    settingsStorage.modifyItem("refreshInterval", function(interval) {
+        if (interval === undefined) {
+            interval = 2 * 60 * 60 * 1000; // 2 hours
         }
-        
-        localStorage.clear();
-        
-        for (var key in showMap) {
-            showStorage.setItem(key, showMap[key]);
-        }
-    }
+        return interval;
+    });
 }
 
 var showStorage = new SimpleStorage("shows");
-migrateToShowStorage();
-
 var settingsStorage = new SimpleStorage("settings");
 
 loadDefaultSettings(settingsStorage);

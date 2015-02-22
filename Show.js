@@ -16,10 +16,7 @@ function Show(showData) {
 Show.prototype.init = function (element) {
     this.createShowDOM();
     this.createEpisodeListDOM();
-
-    this.colorEpisodeList();
-    this.fillInfo();
-    this.fillEpisodeAirDates();
+    this.onAdjustDayOffset();
 }
 
 Show.prototype.createShowDOM = function () {
@@ -55,7 +52,7 @@ Show.prototype.createShowDOM = function () {
             // delete show
             thisRootEl.fadeOut(500, function()
             {
-                thisShow.remove();
+                thisShow.showData.remove();
             });
         })
         .hover(function()
@@ -216,17 +213,16 @@ Show.prototype.appendEpisodesTo = function (element) {
     $("#"+element).append(this.episodeListRootEl);
 }
 
-Show.prototype.remove = function () {
+Show.prototype.onRemove = function () {
     this.rootEl.remove();
     this.episodeListRootEl.remove();
-
-    this.showData.remove();
 }
 
 Show.prototype.adjustDayOffset = function (delta) {
-
     this.showData.adjustDayOffset(delta);
+}
 
+Show.prototype.onAdjustDayOffset = function () {
     this.colorEpisodeList();
     this.fillInfo();
     this.fillEpisodeAirDates();

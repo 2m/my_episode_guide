@@ -1,0 +1,12 @@
+{
+  "shows": {
+    "id_100": {
+      "dayOffset": 1,
+      "ewId": "100",
+      "order": 0
+    }
+  },
+  "settings": {
+    "refreshInterval": 7200000
+  }
+}

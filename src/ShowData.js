@@ -73,6 +73,8 @@ ShowData.prototype.adjustEpisodeAirDates = function () {
 
 ShowData.prototype.getEpisodeToShow = function() {
 
+    this.episodeToShow = null;
+
     var today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -100,7 +102,7 @@ ShowData.prototype.getDaysUntilEpisodeToShow = function() {
 
 ShowData.prototype.formatTimeRemaining = function () {
 
-    if (this.episodeToShowAirsInDays == null) {
+    if (this.episodeToShowAirsInDays == null || this.episodeToShowAirsInDays < 0) {
         return "Episode release date unknown.";
     }
     else {

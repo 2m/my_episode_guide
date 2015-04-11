@@ -119,7 +119,7 @@ function getDaysToNextEpisode() {
     showStorage.withAllItems(function(shows) {
         var nextEpisodeAirsIn = null;
         for (var key in shows) {
-            if (showDataHandles[key].episodeToShowAirsInDays != null) {
+            if (showDataHandles[key].episodeToShowAirsInDays != null && showDataHandles[key].episodeToShowAirsInDays >= 0) {
                 if (nextEpisodeAirsIn == null || showDataHandles[key].episodeToShowAirsInDays < nextEpisodeAirsIn) {
                     nextEpisodeAirsIn = showDataHandles[key].episodeToShowAirsInDays;
                 }

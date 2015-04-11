@@ -137,7 +137,7 @@ function sortShows(storedShows) {
         var title = showData.title;
         var airsIn = showData.episodeToShowAirsInDays;
 
-        if (airsIn == null) {
+        if (airsIn == null || airsIn < 0) {
             showsWithoutAirDate.push({"showId": key, "airsIn": null, 'title': title});
         }
         else {
